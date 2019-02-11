@@ -11,7 +11,7 @@ import SceneKit
 import ARKit
 
 class ViewController: UIViewController, ARSCNViewDelegate {
-
+    
     
     // MARK: IBOutlet
     @IBOutlet var sceneView: ARSCNView!
@@ -26,11 +26,27 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Show statistics such as fps and timing information
         sceneView.showsStatistics = true
         
-        // Create a new scene
-        let scene = SCNScene(named: "art.scnassets/ship.scn")!
         
-        // Set the scene to the view
-        sceneView.scene = scene
+        let cube = SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0.1)
+        
+        
+        let material = SCNMaterial()
+        material.diffuse.contents = UIColor.red
+        cube.materials = [material]
+        
+        let node = SCNNode()
+        
+        node.position = SCNVector3(0, 0.1, -0.5)
+        
+        node.geometry = cube
+        
+        sceneView.scene.rootNode.addChildNode(node)
+        
+        // Create a new scene
+        //        let scene = SCNScene(named: "art.scnassets/ship.scn")!
+        //
+        //        // Set the scene to the view
+        //        sceneView.scene = scene
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -38,9 +54,24 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // Create a session configuration
         let configuration = ARWorldTrackingConfiguration()
-
-        // Run the view's session
-        sceneView.session.run(configuration)
+        
+        
+        if ARWorldTrackingConfiguration.isSupported {
+            
+            // Check Device is AR supprted or not
+            print(ARWorldTrackingConfiguration.isSupported)
+            print(ARConfiguration.isSupported)
+            
+            // Run the view's session
+            sceneView.session.run(configuration)
+            
+        } else {
+            
+            
+            print("your device is not support AR")
+        }
+        
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -49,17 +80,17 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Pause the view's session
         sceneView.session.pause()
     }
-
+    
     // MARK: - ARSCNViewDelegate
     
-/*
-    // Override to create and configure nodes for anchors added to the view's session.
-    func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
-        let node = SCNNode()
+    /*
+     // Override to create and configure nodes for anchors added to the view's session.
+     func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
+     let node = SCNNode()
      
-        return node
-    }
-*/
+     return node
+     }
+     */
     
     func session(_ session: ARSession, didFailWithError error: Error) {
         // Present an error message to the user
